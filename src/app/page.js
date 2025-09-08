@@ -1,103 +1,185 @@
-import Image from "next/image";
+'use client'
+import { useState } from 'react'
+import { Step1 } from './_components/Step1'
+import { Step2 } from './_components/Step2'
+import { Step3 } from './_components/Step3'
+import { Success } from './_components/Success'
+import { parseISO, differenceInYears } from 'date-fns'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const arr = [Step1, Step2, Step3, Success]
+  const [index, setIndex] = useState(0)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  // const [firstName, setFirstName] = useState('')
+  // const [lastName, setLastName] = useState('')
+  // const [userName, setUserName] = useState('')
+
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    userName: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
+    date: '',
+    profile: '',
+  })
+  const [errors, setErrors] = useState({})
+
+  const validateForm = (hed, data) => {
+    const errors = {}
+    if (hed === 1) {
+      if (!data.firstName.trim()) {
+        errors.firstName = 'Өөрийн нэрээ оруулна уу'
+      } else if (data.firstName.length < 2) {
+        errors.firstName = 'Өөрийн нэр багадаа 2 үсэг агуулна'
+      }
+      if (!data.lastName.trim()) {
+        errors.lastName = 'Өөрийн овгийг оруулна уу'
+      } else if (data.lastName.length < 2) {
+        errors.lastName = 'Өөрийн овог багадаа 2 үсэг агуулна'
+      }
+      if (!data.userName.trim()) {
+        errors.userName = 'Өөрийн хочоо оруулна уу'
+      } else if (data.userName.length < 2) {
+        errors.userName = 'Өөрийн хоч багадаа 2 үсэг агуулна'
+      }
+    } else if (hed === 2) {
+      if (!data.email.trim()) {
+        errors.email = 'Email-ээ оруулна уу'
+      } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+        errors.email = 'Email буруу байна'
+      }
+      if (!data.phoneNumber.trim()) {
+        errors.phoneNumber = 'Утасны дугаараа оруулна уу'
+      } else if (data.phoneNumber.length < 8) {
+        errors.phoneNumber = 'Утасны дугаар буруу байна'
+      }
+
+      if (!data.password) {
+        errors.password = 'Нууц үгээ оруулна уу'
+      } else if (data.password.length < 4) {
+        errors.password = 'Нууц үг багадаа 4 үсэгнээс бүрдэнэ'
+      }
+
+      if (data.confirmPassword !== data.password) {
+        errors.confirmPassword = 'Нууц үг таарахгүй байна'
+      }
+    } else if (hed === 3) {
+      if (!data.date) {
+        errors.date = 'Төрсөн огноог оруулна уу'
+      } else {
+        const birthDate = parseISO(data.date)
+        const today = new Date()
+        const age = differenceInYears(today, birthDate)
+
+        if (age < 18) {
+          errors.date = 'Та 18 нас хүрсэн байх ёстой'
+        }
+      }
+      if (!data.profile || data.profile[0] === undefined) {
+        errors.profile = 'Зураг оруулна уу'
+      }
+    }
+    return errors
+  }
+  console.log(errors)
+
+  // const check = (event) => {
+  //   if (event.target.name === 'firstName') {
+  //     setFirstName(event.target.value)
+  //   } else if (event.target.name === 'lastName') {
+  //     setLastName(event.target.value)
+  //   } else if (event.target.name === 'userName') {
+  //     setUserName(event.target.value)
+  //   }
+  // }
+  // console.log(firstName, lastName, userName)
+
+  const check = (event) => {
+    if (event.target.name === 'firstName') {
+      setForm((prev) => {
+        return { ...prev, firstName: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, firstName: '' }))
+    } else if (event.target.name === 'lastName') {
+      setForm((prev) => {
+        return { ...prev, lastName: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, lastName: '' }))
+    } else if (event.target.name === 'userName') {
+      setForm((prev) => {
+        return { ...prev, userName: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, userName: '' }))
+    } else if (event.target.name === 'email') {
+      setForm((prev) => {
+        return { ...prev, email: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, email: '' }))
+    } else if (event.target.name === 'phoneNumber') {
+      setForm((prev) => {
+        return { ...prev, phoneNumber: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, phoneNumber: '' }))
+    } else if (event.target.name === 'password') {
+      setForm((prev) => {
+        return { ...prev, password: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, password: '' }))
+    } else if (event.target.name === 'confirmPassword') {
+      setForm((prev) => {
+        return { ...prev, confirmPassword: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, confirmPassword: '' }))
+    } else if (event.target.name === 'date') {
+      setForm((prev) => {
+        return { ...prev, date: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, date: '' }))
+    } else if (event.target.name === 'profile') {
+      setForm((prev) => {
+        return { ...prev, profile: event.target.value }
+      })
+      setErrors((prev) => ({ ...prev, profile: '' }))
+    }
+  }
+
+  const Stepper = arr[index]
+
+  const nextStep = (hed) => {
+    const newErrors = validateForm(hed, form)
+
+    setErrors((prev) => {
+      return { ...prev, ...newErrors }
+    })
+
+    if (Object.keys(newErrors).length === 0) {
+      // Form submission logic here
+      setIndex((prev) => prev + 1)
+    } else {
+    }
+  }
+  const prevStep = () => {
+    setIndex((prev) => prev - 1)
+  }
+
+  return (
+    <div>
+      {/* {JSON.stringify(form)} */}
+      <Stepper
+        nextStep={nextStep}
+        prevStep={prevStep}
+        arr={arr}
+        length={index}
+        errors={errors}
+        check={check}
+        validateForm={validateForm}
+        form={form}
+        setErrors={setErrors}
+        setForm={setForm}
+      />
     </div>
-  );
+  )
 }
